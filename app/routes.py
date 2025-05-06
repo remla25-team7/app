@@ -1,6 +1,5 @@
 from flask import Blueprint, request, jsonify, render_template
 from config import APP_VERSION, MODEL_SERVICE_URL
-from lib_version import get_version
 import requests
 
 bp = Blueprint("routes", __name__)
@@ -11,7 +10,7 @@ def index():
 
 @bp.route("/version", methods=["GET"])
 def version():
-    return jsonify({"app_version": get_version()})
+    return jsonify({"version": APP_VERSION})
 
 @bp.route("/predict", methods=["POST"])
 def predict():

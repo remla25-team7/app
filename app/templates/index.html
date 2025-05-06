@@ -2,73 +2,81 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Restaurant Sentiment Analyzer</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- Bootstrap 5 -->
+  <title>Sentiment App</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .feedback-section {
+      display: none;
+      margin-top: 1rem;
+    }
+  </style>
 </head>
-<body class="bg-light text-dark">
-
+<body class="bg-light">
   <div class="container mt-5">
-    <div class="card shadow-lg p-4 rounded">
-      <h2 class="text-center mb-4">Restaurant Sentiment Analyzer</h2>
-      
-      <form id="reviewForm">
-        <div class="mb-3">
-          <label for="review" class="form-label">Your review:</label>
-          <textarea class="form-control" id="review" rows="5" placeholder="Type your review here..."></textarea>
-        </div>
-        <button type="submit" class="btn btn-primary w-100">Analyze Sentiment</button>
-      </form>
+    <h1 class="mb-4 text-center">Restaurant Review Sentiment</h1>
 
-      <div id="result" class="alert mt-4 d-none"></div>
+    <div class="mb-3">
+      <textarea id="reviewInput" class="form-control" rows="4" placeholder="Write your review..."></textarea>
+    </div>
+    <button class="btn btn-primary" onclick="submitReview()">Submit</button>
+
+    <div id="result" class="mt-4 fs-5 fw-bold"></div>
+
+    <div id="feedback" class="feedback-section">
+      <p class="mt-3">Was this prediction correct?</p>
+      <button class="btn btn-outline-success me-2" onclick="submitFeedback(true)">Yes</button>
+      <button class="btn btn-outline-danger" onclick="showCorrection()">No</button>
     </div>
 
-    <footer class="text-center mt-4 text-muted">
-      <small>App Version: <span id="version">loading...</span></small>
-    </footer>
+    <div id="correctionForm" class="feedback-section">
+      <label for="correctLabel" class="form-label mt-3">Submit correct label:</label>
+      <select id="correctLabel" class="form-select w-auto">
+        <option value="positive">Positive</option>
+        <option value="negative">Negative</option>
+      </select>
+      <button class="btn btn-secondary mt-2" onclick="submitCorrection()">Submit Correction</button>
+    </div>
+
+    <div id="feedbackResult" class="mt-3 text-success fw-medium"></div>
   </div>
 
   <script>
-    // Load app version
-    fetch('/version')
-      .then(res => res.json())
-      .then(data => {
-        document.getElementById('version').textContent = data.version || 'unknown';
-      });
-
-    // Handle form submission
-    document.getElementById("reviewForm").onsubmit = async function(e) {
-      e.preventDefault();
-      const review = document.getElementById("review").value;
-      const resultBox = document.getElementById("result");
-      resultBox.classList.add("d-none");
-
-      if (!review.trim()) {
-        resultBox.textContent = "Please enter a review.";
-        resultBox.className = "alert alert-warning mt-4";
-        return;
-      }
-
-      const response = await fetch("/predict", {
+    function submitReview() {
+      const review = document.getElementById("reviewInput").value;
+      fetch("/predict", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ review })
+      })
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("result").innerText = "Prediction: " + data.sentiment;
+        document.getElementById("feedback").style.display = "block";
+        document.getElementById("correctionForm").style.display = "none";
+        document.getElementById("feedbackResult").innerText = "";
       });
+    }
 
-      const result = await response.json();
+    function submitFeedback(isCorrect) {
+      document.getElementById("feedbackResult").innerText = isCorrect
+        ? "Thanks for confirming!"
+        : "";
+    }
 
-      resultBox.classList.remove("d-none");
+    function showCorrection() {
+      document.getElementById("correctionForm").style.display = "block";
+    }
 
-      if (response.ok) {
-        resultBox.textContent = "Predicted sentiment: " + JSON.stringify(result);
-        resultBox.className = "alert alert-success mt-4";
-      } else {
-        resultBox.textContent = result.error || "An error occurred.";
-        resultBox.className = "alert alert-danger mt-4";
-      }
-    };
+    function submitCorrection() {
+      const corrected = document.getElementById("correctLabel").value;
+      document.getElementById("feedbackResult").innerText = `Thanks! You submitted: ${corrected}`;
+      // Optionally send to backend:
+      fetch("/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ corrected_label: corrected })
+      });
+    }
   </script>
-
 </body>
 </html>

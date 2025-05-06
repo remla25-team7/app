@@ -2,8 +2,16 @@ import os
 from dotenv import load_dotenv
 from pathlib import Path
 
-dotenv_path = Path(__file__).resolve().parent / ".env"
+# ✅ Absolute path to .env
+dotenv_path = Path(__file__).parent / ".env"
+print("DEBUG - Looking for .env at:", dotenv_path)
+
+# ✅ Load .env file
 load_dotenv(dotenv_path)
+
+# ✅ Print loaded envs
+print("DEBUG - os.environ['PORT'] =", os.getenv("PORT"))
+print("DEBUG - MODEL_SERVICE_URL =", os.getenv("MODEL_SERVICE_URL")) 
 
 # Use it in config
 from app import create_app
