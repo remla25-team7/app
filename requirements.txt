@@ -1,0 +1,4 @@
+flask
+requests
+python-dotenv
+git+https://github.com/remla25-team7/lib-version.git@v1.0.0
