@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sentiment App</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .feedback-section {
+      display: none;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body class="bg-light">
+  <div class="container mt-5">
+    <h1 class="mb-4 text-center">Restaurant Review Sentiment</h1>
+
+    <div class="mb-3">
+      <textarea id="reviewInput" class="form-control" rows="4" placeholder="Write your review..."></textarea>
+    </div>
+    <button class="btn btn-primary" onclick="submitReview()">Submit</button>
+
+    <div id="result" class="mt-4 fs-5 fw-bold"></div>
+
+    <div id="feedback" class="feedback-section">
+      <p class="mt-3">Was this prediction correct?</p>
+      <button class="btn btn-outline-success me-2" onclick="submitFeedback(true)">Yes</button>
+      <button class="btn btn-outline-danger" onclick="showCorrection()">No</button>
+    </div>
+
+    <div id="correctionForm" class="feedback-section">
+      <label for="correctLabel" class="form-label mt-3">Submit correct label:</label>
+      <select id="correctLabel" class="form-select w-auto">
+        <option value="positive">Positive</option>
+        <option value="negative">Negative</option>
+      </select>
+      <button class="btn btn-secondary mt-2" onclick="submitCorrection()">Submit Correction</button>
+    </div>
+
+    <div id="feedbackResult" class="mt-3 text-success fw-medium"></div>
+  </div>
+
+  <script>
+    function submitReview() {
+      const review = document.getElementById("reviewInput").value;
+      fetch("/predict", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ review })
+      })
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("result").innerText = "Prediction: " + data.sentiment;
+        document.getElementById("feedback").style.display = "block";
+        document.getElementById("correctionForm").style.display = "none";
+        document.getElementById("feedbackResult").innerText = "";
+      });
+    }
+
+    function submitFeedback(isCorrect) {
+      document.getElementById("feedbackResult").innerText = isCorrect
+        ? "Thanks for confirming!"
+        : "";
+    }
+
+    function showCorrection() {
+      document.getElementById("correctionForm").style.display = "block";
+    }
+
+    function submitCorrection() {
+      const corrected = document.getElementById("correctLabel").value;
+      document.getElementById("feedbackResult").innerText = `Thanks! You submitted: ${corrected}`;
+      // Optionally send to backend:
+      fetch("/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ corrected_label: corrected })
+      });
+    }
+  </script>
+</body>
+</html>
