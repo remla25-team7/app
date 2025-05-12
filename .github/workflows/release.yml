@@ -6,6 +6,7 @@ on:
     tags:
       - v*
 
+
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME_FRONTEND: app-frontend
