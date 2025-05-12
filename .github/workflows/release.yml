@@ -4,8 +4,8 @@ on:
     branches:
       - main
       - release
-    tags:
-      - v*
+    tags: ['v[0-9]+.[0-9]+.[0-9]+']
+
 
 
 env:
