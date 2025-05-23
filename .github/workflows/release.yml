@@ -32,18 +32,17 @@ jobs:
       - name: Build and push multi-platform Docker image
         run: |
           IMG="ghcr.io/${{ github.repository }}"
-          IMG=${IMG@L}
+          IMG=$(echo "$IMG" | tr '[:upper:]' '[:lower:]')
           echo "Final image name: $IMG"
 
-          # Build and push latest tag for multiple platforms
-          docker buildx build --platform linux/amd64,linux/arm64 \
-            -t $IMG:latest \
-            --push .
-
-          # If this is a tag push, also build and push that version tag
           if [[ $GITHUB_REF == refs/tags/* ]]; then
             VERSION=${GITHUB_REF#refs/tags/}
             docker buildx build --platform linux/amd64,linux/arm64 \
+              -t $IMG:latest \
               -t $IMG:$VERSION \
+              --push .
+          else
+            docker buildx build --platform linux/amd64,linux/arm64 \
+              -t $IMG:latest \
               --push .
           fi
