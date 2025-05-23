@@ -2,7 +2,7 @@ from flask import Blueprint, request, jsonify, render_template, Response
 from config import APP_VERSION, MODEL_SERVICE_URL
 import requests
 import time
-from prometheus_client import Counter, Gauge, Histogram, generate_latest
+from prometheus_client import Counter, Gauge, Histogram, generate_latest, CONTENT_TYPE_LATEST
 from prometheus_client import start_http_server
 
 REQUEST_COUNT = Counter('sentiment_app_requests_total', 'Total number of requests')
@@ -44,4 +44,4 @@ def predict():
 
 @bp.route("/metrics", methods=["GET"])
 def metrics():
-    return Response(generate_latest(), mimetype="CONTENT_TYPE_LATEST")
+    return Response(generate_latest(), mimetype=CONTENT_TYPE_LATEST)
