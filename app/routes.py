@@ -17,6 +17,7 @@ def index():
 
 @bp.route("/version", methods=["GET"])
 def version():
+    print(f"APP_VERSION: {APP_VERSION}")
     return jsonify({"version": APP_VERSION})
 
 @bp.route("/predict", methods=["POST"])
