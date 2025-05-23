@@ -42,6 +42,6 @@ def predict():
         return jsonify({"error": str(e)}), 500
 
 
-@bp.route("/metrics", methods=["GET"])
+@bp.route("/metrics")
 def metrics():
     return Response(generate_latest(), mimetype=CONTENT_TYPE_LATEST)
