@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify, render_template, Response
 from config import APP_VERSION, MODEL_SERVICE_URL
 import requests
+import time
 from prometheus_client import Counter, Gauge, Histogram, generate_latest
 from prometheus_client import start_http_server
 
@@ -13,6 +14,8 @@ bp = Blueprint("routes", __name__)
 
 @bp.route("/", methods=["GET"])
 def index():
+    REQUEST_COUNT.inc()
+    print(f"REQUEST_COUNT: {REQUEST_COUNT}")    
     return render_template("index.html")
 
 @bp.route("/version", methods=["GET"])
@@ -23,7 +26,6 @@ def version():
 @bp.route("/predict", methods=["POST"])
 def predict():
     start = time.time()
-    REQUEST_COUNT.inc()
     data = request.get_json()
     review = data.get("review") if data else None
     REVIEW_LENGTH.set(len(review))
