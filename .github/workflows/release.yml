@@ -3,7 +3,7 @@ on:
   push:
     branches:
       - main
-      - release
+      - cristian-a3
     tags: ['v[0-9]+.[0-9]+.[0-9]+']
 
 
