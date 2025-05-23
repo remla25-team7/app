@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, render_template
+from flask import Blueprint, request, jsonify, render_template, Response
 from config import APP_VERSION, MODEL_SERVICE_URL
 import requests
 from prometheus_client import Counter, Gauge, Histogram, generate_latest
