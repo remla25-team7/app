@@ -50,26 +50,13 @@ jobs:
             echo "version=latest" >> $GITHUB_OUTPUT
           fi
 
-      - name: Build and push frontend image
+      - name: Build and push app image
         run: |
-          IMAGE="${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME_FRONTEND }}"
+          IMAGE="${{ env.REGISTRY }}/${{ github.repository_owner }}/app"
           IMAGE=$(echo "$IMAGE" | tr '[:upper:]' '[:lower:]')
           VERSION="${{ steps.version.outputs.version }}"
 
           docker buildx build --platform linux/amd64,linux/arm64 \
-            -f Dockerfile.frontend \
-            -t $IMAGE:latest \
-            -t $IMAGE:$VERSION \
-            --push .
-
-      - name: Build and push service image
-        run: |
-          IMAGE="${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME_SERVICE }}"
-          IMAGE=$(echo "$IMAGE" | tr '[:upper:]' '[:lower:]')
-          VERSION="${{ steps.version.outputs.version }}"
-
-          docker buildx build --platform linux/amd64,linux/arm64 \
-            -f Dockerfile.service \
             -t $IMAGE:latest \
             -t $IMAGE:$VERSION \
             --push .
