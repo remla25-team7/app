@@ -1,0 +1,66 @@
+name: Pre-release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+      - '!v*.*.*-pre*'  # Only match stable releases
+
+  workflow_dispatch:
+
+jobs:
+  generate-prerelease:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git identity
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+
+      - name: Compute next pre-release version
+        id: prerelease
+        run: |
+          TAG=${GITHUB_REF#refs/tags/}
+          BASE_VERSION="${TAG#v}"
+          
+          # Extract major.minor.patch
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$BASE_VERSION"
+          NEXT_PATCH=$((PATCH + 1))
+
+          # Add timestamp to differentiate pre-releases
+          STAMP=$(date +%Y%m%d%H%M%S)
+          PRE_TAG="v${MAJOR}.${MINOR}.${NEXT_PATCH}-pre.${STAMP}"
+
+          echo "Generated pre-release tag: $PRE_TAG"
+          echo "PRE_TAG=$PRE_TAG" >> $GITHUB_ENV
+
+      - name: Create and push pre-release tag
+        run: |
+          git tag -a "$PRE_TAG" -m "Auto pre-release after $GITHUB_REF"
+          git push origin "$PRE_TAG"
+
+      - name: Publish GitHub Pre-release
+        uses: softprops/action-gh-release@v1
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+          tag_name: ${{ env.PRE_TAG }}
+          prerelease: true
+          name: Pre-release ${{ env.PRE_TAG }}
+          body: |
+            This is an automated pre-release following ${{ github.ref_name }}.
+
+            ## Docker Image
+            ghcr.io/${{ github.repository }}:${{ env.PRE_TAG }}
+
+            ### Pull:
+            ```bash
+            docker pull ghcr.io/${{ github.repository }}:${{ env.PRE_TAG }}
+            ```
