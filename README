@@ -1,8 +1,0 @@
-A simple Flask-based web application that allows users to submit restaurant reviews and view the predicted sentiment (positive or negative). Has a frontend and connects to an external model-service for analysis.
-
- What This App Does
-
-- Accepts a user-submitted review from a web form
-- Sends the review text to a separate `model-service`
-- Displays the predicted sentiment on the same page
-- Shows the current version using a reusable `lib-version` utility
