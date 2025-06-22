@@ -1,15 +1,16 @@
 # App Service
+
 This service provides the user interface and API gateway for the sentiment prediction application. It renders an HTML form, forwards review inputs to the model-service for analysis, and exposes application metadata and monitoring metrics. The API is documented using Swagger (OpenAPI), accessible through a web interface.
 
 ---
 
 ## Features
 
-- HTML form for submitting reviews (`/`)
-- Sentiment prediction API (`/predict`) that proxies to the model-service
-- Application and model version info endpoints (`/version`, `/model-version`)
-- Prometheus-compatible monitoring metrics (`/metrics`)
-- Interactive Swagger documentation (`/apidocs/`)
+- **HTML form** for submitting reviews (`/`)
+- **Sentiment prediction API** (`/predict`) that proxies to the model-service
+- **Application and model version info endpoints** (`/version`, `/model-version`)
+- **Prometheus-compatible monitoring metrics** (`/metrics`)
+- **Interactive Swagger documentation** (`/apidocs/`)
 
 ---
 
@@ -18,10 +19,8 @@ This service provides the user interface and API gateway for the sentiment predi
 After starting the service, visit:
 
 ```
-
-[http://localhost:5001/apidocs/](http://localhost:5001/apidocs/)
-
-````
+http://localhost:5001/apidocs/
+```
 
 Here you can explore and test all available endpoints interactively.
 
@@ -31,8 +30,8 @@ Here you can explore and test all available endpoints interactively.
 
 To communicate with the model-service securely, this app includes an `X-API-Key` header in all outbound requests. The key is loaded from a secret file, depending on the environment:
 
-- Docker Compose: `/run/secrets/model_credentials`
-- Kubernetes: `/app/secrets/model_credentials`
+- **Docker Compose:** `/run/secrets/model_credentials`
+- **Kubernetes:** `/app/secrets/model_credentials`
 
 If no valid secret is found, requests to the model-service may fail with a 401 error.
 
@@ -48,9 +47,9 @@ PORT=5001
 APP_VERSION=0.1.0
 ```
 
-* `MODEL_SERVICE_URL`: Location of the model-service API
-* `PORT`: Port to run the app-service on
-* `APP_VERSION`: Version string displayed in the UI and `/version` endpoint
+- `MODEL_SERVICE_URL`: Location of the model-service API  
+- `PORT`: Port to run the app-service on  
+- `APP_VERSION`: Version string displayed in the UI and `/version` endpoint
 
 ---
 
@@ -58,10 +57,8 @@ APP_VERSION=0.1.0
 
 You can run this service without Docker for local development:
 
-1. Make sure Python 3.11+ is installed
-
-2. Create and activate a virtual environment (optional but recommended)
-
+1. Make sure **Python 3.11+** is installed.
+2. Create and activate a virtual environment (optional but recommended).
 3. Install dependencies:
 
    ```bash
@@ -81,6 +78,7 @@ http://localhost:5001/apidocs/
 ```
 
 to access the Swagger UI and interact with the endpoints.
+
 ---
 
 ## Monitoring
@@ -93,6 +91,6 @@ http://localhost:5001/metrics
 
 Metrics include:
 
-* Total request count
-* Length of the most recent review
-* Histogram of response time
+- Total request count
+- Length of the most recent review
+- Histogram of response time
