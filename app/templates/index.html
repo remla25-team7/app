@@ -39,7 +39,10 @@
 
     <div id="feedbackResult" class="mt-3 text-success fw-medium"></div>
   </div>
-
+  <div class="position-fixed bottom-0 end-0 p-3 text-muted small" id="versionInfo">
+  Loading versions...
+  </div>
+  
   <script>
     function submitReview() {
       const review = document.getElementById("reviewInput").value;
@@ -75,6 +78,21 @@
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ corrected_label: corrected })
+      });
+    }
+    
+    window.onload = () => {
+      Promise.all([
+        fetch("/version").then(res => res.json()),
+        fetch("/model-version").then(res => res.json())
+      ])
+      .then(([appData, modelData]) => {
+        document.getElementById("versionInfo").innerText =
+          `App v${appData.version} | Model-Service v${modelData.model_service_version}`;
+      })
+      .catch((error) => {
+        console.error("Version fetch failed:", error);
+        document.getElementById("versionInfo").innerText = "Version info unavailable";
       });
     }
   </script>

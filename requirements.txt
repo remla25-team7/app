@@ -3,3 +3,4 @@ requests
 python-dotenv
 prometheus_client
 git+https://github.com/remla25-team7/lib-version.git@v1.0.0
+flasgger==0.9.7.1
