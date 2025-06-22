@@ -53,7 +53,14 @@
       })
       .then(res => res.json())
       .then(data => {
-        document.getElementById("result").innerText = "Prediction: " + data.sentiment;
+        const predictionText = `Prediction: ${data.sentiment}`;
+        const confidenceText = data.confidence !== undefined
+          ? `Confidence: ${(data.confidence * 100).toFixed(2)}%`
+          : "";
+
+        document.getElementById("result").innerHTML =
+          `<div>${predictionText}</div><div>${confidenceText}</div>`;
+
         document.getElementById("feedback").style.display = "block";
         document.getElementById("correctionForm").style.display = "none";
         document.getElementById("feedbackResult").innerText = "";
