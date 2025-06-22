@@ -14,7 +14,7 @@ RESPONSE_TIME = Histogram('sentiment_app_response_time_seconds', 'Response time'
 
 bp = Blueprint("routes", __name__)
 
-SECRET_FILE_PATH = '/run/secrets/model_credentials'
+SECRET_FILE_PATH = '/app/secrets/model_credentials'
 API_KEY = None
 
 try:
