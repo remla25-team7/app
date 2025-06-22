@@ -6,6 +6,8 @@ import time
 from prometheus_client import Counter, Gauge, Histogram, generate_latest, CONTENT_TYPE_LATEST
 from prometheus_client import start_http_server
 import os 
+import pathlib
+
 
 # --- Existing Metrics ---
 REQUEST_COUNT = Counter('sentiment_app_requests_total', 'Total number of requests')
@@ -14,15 +16,24 @@ RESPONSE_TIME = Histogram('sentiment_app_response_time_seconds', 'Response time'
 
 bp = Blueprint("routes", __name__)
 
-SECRET_FILE_PATH = '/app/secrets/model_credentials'
+
+SECRET_PATHS = [
+    '/run/secrets/model_credentials',  # docker-compose default
+    '/app/secrets/model_credentials',  # kubernetes default
+]
+
 API_KEY = None
 
-try:
-    with open(SECRET_FILE_PATH, 'r') as f:
-        API_KEY = f.read().strip()
-    print(f"APP SERVICE (routes.py): Successfully loaded API key.")
-except Exception as e:
-    print(f"APP SERVICE (routes.py): WARNING - Could not read API key. {e}")
+for path_str in SECRET_PATHS:
+    path = pathlib.Path(path_str)
+    if path.exists():
+        print(f"APP SERVICE: Successfully loaded API key from {path_str}.")
+        with path.open('r') as f:
+            API_KEY = f.read().strip()
+        break
+
+if not API_KEY:
+    print(f"WARNING: Secret file not found in any known location {SECRET_PATHS}.")
 
 
 @bp.route("/", methods=["GET"])
