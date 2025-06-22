@@ -67,7 +67,6 @@ def predict():
             headers['X-API-Key'] = API_KEY
         
         # pass the headers to the request 
-        print(f"APP SERVICE: Calling model service with headers: {list(headers.keys())}") 
         resp = requests.post(f"{MODEL_SERVICE_URL}/predict", json={"review": review}, headers=headers)
         
         # check for 4xx/5xx errors
