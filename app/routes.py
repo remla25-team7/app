@@ -160,6 +160,31 @@ def predict():
 
 @bp.route("/model-version", methods=["GET"])
 def model_version():
+    """
+    Get the model service version.
+    ---
+    tags:
+      - Metadata
+    summary: Retrieve model-service version
+    description: Calls the `/version` endpoint of the model-service and returns its version information. Requires valid API key if model-service is secured.
+    responses:
+      200:
+        description: Successfully retrieved model-service version
+        schema:
+          type: object
+          properties:
+            model_service_version:
+              type: string
+              example: "v1.2.3"
+      500:
+        description: Error communicating with model-service
+        schema:
+          type: object
+          properties:
+            model_service_version:
+              type: string
+              example: "unavailable"
+    """
     headers = {}
     if API_KEY:
         headers["X-API-Key"] = API_KEY
