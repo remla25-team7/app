@@ -141,12 +141,14 @@ def predict():
 
         RESPONSE_TIME.observe(time.time() - start)
 
-        # Convert numeric sentiment to label
         result = resp.json()
         numeric = result.get("sentiment")
-
+        confidence = result.get("confidence")
         sentiment_label = "positive" if numeric == 1 else "negative"
-        return jsonify({"sentiment": sentiment_label}), resp.status_code
+        return jsonify({
+            "sentiment": sentiment_label,
+            "confidence": confidence
+        }), resp.status_code
     
     except requests.exceptions.HTTPError as err:
         # handle specific HTTP errors from the model service (like 401)
