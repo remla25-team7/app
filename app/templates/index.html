@@ -88,7 +88,7 @@
       ])
       .then(([appData, modelData]) => {
         document.getElementById("versionInfo").innerText =
-          `App v${appData.version} | Model-Service v${modelData.model_service_version}`;
+          `App ${appData.version} | Model-Service ${modelData.model_service_version}`;
       })
       .catch((error) => {
         console.error("Version fetch failed:", error);
